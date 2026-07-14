@@ -1,0 +1,71 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - claude/focus-obd2-scanner-app-569i9o
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+          channel: stable
+          cache: true
+
+      # Regenerates files intentionally not committed:
+      # gradle wrapper, gradlew scripts and launcher icons.
+      # Existing project files are never overwritten.
+      - name: Regenerate platform boilerplate
+        run: flutter create --platforms=android --project-name focus_obd2_scanner .
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk FocusOBD2Scanner-v1.0.0.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusOBD2Scanner-APK
+          path: FocusOBD2Scanner-v1.0.0.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Focus OBD2 Scanner v1.0.0
+          body: |
+            📱 **Focus OBD2 Scanner — Android APK**
+
+            تطبيق تشخيص السيارات عبر Bluetooth OBD2 (ELM327).
+            Professional Bluetooth OBD2 (ELM327) car diagnostics app.
+
+            **التثبيت | Install:** حمّل ملف APK أدناه وافتحه على هاتفك (Android 5.0+).
+            Download the APK below and open it on your phone (Android 5.0+).
+          files: FocusOBD2Scanner-v1.0.0.apk

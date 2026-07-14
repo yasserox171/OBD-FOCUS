@@ -85,7 +85,7 @@ abstract class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
-        indicatorColor: AppColors.primaryBlue.withOpacity(0.2),
+        indicatorColor: AppColors.primaryBlue.withValues(alpha: 0.2),
         labelTextStyle: WidgetStatePropertyAll(textTheme.labelSmall),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
@@ -144,7 +144,7 @@ abstract class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surfaceLight,
-        indicatorColor: AppColors.primaryBlue.withOpacity(0.15),
+        indicatorColor: AppColors.primaryBlue.withValues(alpha: 0.15),
         labelTextStyle: WidgetStatePropertyAll(textTheme.labelSmall),
       ),
     );

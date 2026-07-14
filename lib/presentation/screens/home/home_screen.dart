@@ -74,8 +74,8 @@ class _ConnectedCard extends ConsumerWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primaryBlue.withOpacity(0.18),
-              AppColors.accentCyan.withOpacity(0.08),
+              AppColors.primaryBlue.withValues(alpha: 0.18),
+              AppColors.accentCyan.withValues(alpha: 0.08),
             ],
           ),
           borderRadius: BorderRadius.circular(16),

@@ -154,7 +154,7 @@ class _GaugePainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth = stroke
           ..strokeCap = StrokeCap.butt
-          ..color = color.withOpacity(0.28),
+          ..color = color.withValues(alpha: 0.28),
       );
     }
 

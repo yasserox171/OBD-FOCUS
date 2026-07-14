@@ -30,7 +30,7 @@ class MetricTile extends StatelessWidget {
     final iconWidget = Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.12),
+        color: accent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(icon, color: accent, size: 22),
@@ -107,7 +107,7 @@ class _PulseState extends State<_Pulse> with SingleTickerProviderStateMixin {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: widget.color.withOpacity(0.35 * _controller.value),
+              color: widget.color.withValues(alpha: 0.35 * _controller.value),
               blurRadius: 14,
               spreadRadius: 3 * _controller.value,
             ),

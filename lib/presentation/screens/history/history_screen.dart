@@ -260,7 +260,7 @@ class _ChartsSection extends StatelessWidget {
           show: true,
           drawVerticalLine: false,
           getDrawingHorizontalLine: (v) =>
-              FlLine(color: Colors.white.withOpacity(0.06), strokeWidth: 1),
+              FlLine(color: Colors.white.withValues(alpha: 0.06), strokeWidth: 1),
         ),
         titlesData: _leftTitlesOnly(),
         borderData: FlBorderData(show: false),
@@ -326,8 +326,8 @@ class _ChartsSection extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.accentCyan.withOpacity(0.35),
-                  AppColors.accentCyan.withOpacity(0.02),
+                  AppColors.accentCyan.withValues(alpha: 0.35),
+                  AppColors.accentCyan.withValues(alpha: 0.02),
                 ],
               ),
             ),

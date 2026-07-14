@@ -123,6 +123,8 @@ class NotificationService {
       fireAt,
       const NotificationDetails(android: _reportChannel),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: '/reports',
     );

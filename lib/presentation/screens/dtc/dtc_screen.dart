@@ -81,7 +81,7 @@ class _ActionsRow extends ConsumerWidget {
                 side: BorderSide(
                   color: connected && dtc.codes.isNotEmpty
                       ? AppColors.danger
-                      : AppColors.danger.withOpacity(0.3),
+                      : AppColors.danger.withValues(alpha: 0.3),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
