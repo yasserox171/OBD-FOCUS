@@ -9,6 +9,21 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+// Old plugins (flutter_bluetooth_serial) declare an outdated compileSdk
+// while their merged androidx dependencies need 31+ ("android:attr/lStar
+// not found"). Force a modern compileSdk on every plugin library.
+// Must be registered BEFORE the evaluationDependsOn(":app") block below,
+// which eagerly evaluates :app during root configuration.
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                compileSdkVersion 34
+            }
+        }
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(":app")
 }
