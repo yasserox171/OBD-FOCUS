@@ -108,42 +108,42 @@ abstract class ObdUtils {
 
   /// Decodes a Mode 03/07/0A response into DTC strings (e.g. "P0301").
   ///
-  /// Response format: `43 [count?] A1 A2 B1 B2 ...` where each DTC is two
-  /// bytes; `0000` entries are padding. Handles both CAN (with count byte)
-  /// and legacy formats by scanning byte pairs after the mode byte.
+  /// Each response line is one frame: `43 [count?] A1 A2 B1 B2 ...` where
+  /// every DTC is two bytes and `0000` entries are padding. CAN frames carry
+  /// a count byte right after the mode byte; legacy (K-line) frames do not.
+  /// The count byte is only skipped when the remaining payload length is
+  /// exactly `count * 2` bytes — the unambiguous CAN signature.
   static List<String> decodeDtcs(String raw, int mode) {
     if (isError(raw)) return const [];
-    final hex = normalize(raw);
     final marker =
         (mode + 0x40).toRadixString(16).padLeft(2, '0').toUpperCase();
     final codes = <String>{};
 
-    var searchFrom = 0;
-    while (true) {
-      final idx = hex.indexOf(marker, searchFrom);
-      if (idx < 0) break;
-      var cursor = idx + 2;
-      // CAN responses include a count byte right after the mode byte; it is
-      // small (< 0x40) while a real DTC first byte is unconstrained. Skip a
-      // plausible count byte when the remaining length matches count*4.
-      if (cursor + 2 <= hex.length) {
-        final maybeCount =
-            int.tryParse(hex.substring(cursor, cursor + 2), radix: 16);
+    for (final line in raw.split(RegExp(r'[\r\n>]+'))) {
+      final hex = line
+          .toUpperCase()
+          .replaceAll('SEARCHING...', '')
+          .replaceAll(RegExp(r'[^0-9A-F]'), '');
+      final idx = hex.indexOf(marker);
+      if (idx < 0) continue;
+
+      var data = hex.substring(idx + marker.length);
+      // Skip a CAN count byte only on an exact length match.
+      if (data.length >= 2) {
+        final maybeCount = int.tryParse(data.substring(0, 2), radix: 16);
         if (maybeCount != null &&
             maybeCount > 0 &&
             maybeCount <= 16 &&
-            hex.length - (cursor + 2) >= maybeCount * 4) {
-          cursor += 2;
+            data.length - 2 == maybeCount * 4) {
+          data = data.substring(2);
         }
       }
-      while (cursor + 4 <= hex.length) {
-        final pair = hex.substring(cursor, cursor + 4);
-        cursor += 4;
+      for (var i = 0; i + 4 <= data.length; i += 4) {
+        final pair = data.substring(i, i + 4);
         if (pair == '0000') continue;
         final code = _dtcFromPair(pair);
         if (code != null) codes.add(code);
       }
-      searchFrom = idx + 2;
     }
     return codes.toList();
   }
