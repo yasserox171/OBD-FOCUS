@@ -35,7 +35,11 @@ jobs:
       # gradle wrapper, gradlew scripts and launcher icons.
       # Existing project files are never overwritten.
       - name: Regenerate platform boilerplate
-        run: flutter create --platforms=android --project-name focus_obd2_scanner .
+        run: |
+          flutter create --platforms=android --project-name focus_obd2_scanner .
+          # flutter create emits Kotlin-DSL gradle files alongside our
+          # committed Groovy ones; remove the strays so Gradle uses ours.
+          rm -f android/settings.gradle.kts android/build.gradle.kts android/app/build.gradle.kts
 
       - name: Get dependencies
         run: flutter pub get

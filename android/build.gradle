@@ -13,19 +13,9 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-// flutter_bluetooth_serial (and some older plugins) do not declare an AGP
-// namespace. This shim injects one so the project builds on AGP 7.4+.
-subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty("android")) {
-            project.android {
-                if (namespace == null) {
-                    namespace project.group
-                }
-            }
-        }
-    }
-}
+// NOTE: AGP is pinned to 7.4.2 (settings.gradle) because
+// flutter_bluetooth_serial does not declare an AGP namespace; AGP 7.x
+// falls back to the manifest package attribute, AGP 8+ would fail.
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
