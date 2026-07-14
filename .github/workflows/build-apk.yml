@@ -48,7 +48,21 @@ jobs:
         run: flutter analyze
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: |
+          set -o pipefail
+          flutter build apk --release --verbose 2>&1 | tee /tmp/flutter-build.log | grep -v '^\[' || { tail -300 /tmp/flutter-build.log; exit 1; }
+
+      # Failure logs are pushed to the ci-logs branch so they can be read
+      # over plain git when API access is unavailable.
+      - name: Publish failure log to ci-logs branch
+        if: failure()
+        run: |
+          mkdir -p /tmp/ci-logs && cd /tmp/ci-logs
+          git init -q -b ci-logs
+          tail -800 /tmp/flutter-build.log > build-failure.log 2>/dev/null || echo "no build log captured" > build-failure.log
+          git add build-failure.log
+          git -c user.name=ci -c user.email=ci@local commit -qm "CI failure log $GITHUB_RUN_ID"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs
 
       - name: Rename APK
         run: cp build/app/outputs/flutter-apk/app-release.apk FocusOBD2Scanner-v1.0.0.apk
