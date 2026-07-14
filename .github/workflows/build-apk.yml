@@ -50,7 +50,7 @@ jobs:
       - name: Build release APK
         run: |
           set -o pipefail
-          flutter build apk --release --verbose 2>&1 | tee /tmp/flutter-build.log | grep -v '^\[' || { tail -300 /tmp/flutter-build.log; exit 1; }
+          flutter build apk --release 2>&1 | tee /tmp/flutter-build.log
 
       # Failure logs are pushed to the ci-logs branch so they can be read
       # over plain git when API access is unavailable.
